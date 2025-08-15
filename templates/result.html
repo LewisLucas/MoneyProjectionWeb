@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Result Image</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <a href="{{ url_for('index') }}">Back to Home</a><br><br>
+    <img src="{{ image_url }}" alt="Result Image">
+    <br>
+    {% if transactions_text %}
+    <div style="white-space: pre-wrap; background: #f5f5f5; padding: 1em; border-radius: 8px; margin-top: 1em;">
+    {% for line in transactions_text %}
+        <li>{{ line }}</li>
+    {% endfor %}
+    </div>
+    {% endif %}
+    
+</body>
+</html>

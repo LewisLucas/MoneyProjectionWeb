@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload JSON and Run Script</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <h2>Upload JSON and enter current money</h2>
+    <form action="/submit" method="POST" enctype="multipart/form-data">
+        <label>Select JSON File:</label><br>
+        <input type="file" name="json_file" accept=".json"><br><br><a href="createJSON">Create JSON</a><br><br>
+
+        <label>Current Money:</label><br>
+        <input type="text" name="money"><br><br>
+        <label>Days to project(Default=50):</label><br>
+        <input type="text" name="days"><br><br>
+
+        <input type="submit" value="Run Script">
+    </form>
+</body>
+</html>

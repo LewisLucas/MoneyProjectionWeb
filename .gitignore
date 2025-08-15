@@ -1,0 +1,5 @@
+images/*
+media/*
+uploads/*
+__pycache__/
+en

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedule JSON Creator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2em; }
+        label { display: block; margin-top: 1em; }
+        .entry-list { margin-top: 2em; }
+        textarea { width: 100%; height: 200px; }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <a href="/">Back to Home</a>
+    <h1>Schedule JSON Creator</h1>
+    <form id="entryForm">
+        <label>
+            Frequency:
+            <select id="frequency" required>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Biweekly</option>
+                <option value="quadweekly">Quadweekly</option>
+                <option value="monthly">Monthly</option>
+            </select>
+        </label>
+        <label>
+            Type:
+            <select id="inout" required>
+                <option value="in">In</option>
+                <option value="out">Out</option>
+            </select>
+        </label>
+        <label>
+            Name: <input type="text" id="name" required>
+        </label>
+        <label>
+            Date (DD-MM-YYYY): <input type="text" id="date" required pattern="\d{2}-\d{2}-\d{4}">
+        </label>
+        <label>
+            Amount: <input type="number" id="amount" step="0.01" required>
+        </label>
+        <button type="submit">Add Entry</button>
+    </form>
+
+    <div class="entry-list">
+        <h2>Current Schedule JSON</h2>
+        <textarea id="jsonOutput" readonly></textarea>
+        <div id="entriesTable"></div>
+        <label>
+            Filename: <input type="text" id="user_file_name" required>
+        </label>
+        <button id="downloadBtn">Download JSON</button>
+    </div>
+
+    <script>
+        const schedule = {
+            daily: { in: {}, out: {} },
+            weekly: { in: {}, out: {} },
+            biweekly: { in: {}, out: {} },
+            quadweekly: { in: {}, out: {} },
+            monthly: { in: {}, out: {} }
+        };
+
+        function updateJsonOutput() {
+            document.getElementById('jsonOutput').value = JSON.stringify(schedule, null, 4);
+            renderEntriesTable();
+        }
+
+        function renderEntriesTable() {
+            const container = document.getElementById('entriesTable');
+            container.innerHTML = '';
+            for (const freq of Object.keys(schedule)) {
+                for (const inout of ['in', 'out']) {
+                    const entries = schedule[freq][inout];
+                    if (Object.keys(entries).length > 0) {
+                        const table = document.createElement('table');
+                        table.border = 1;
+                        table.style.marginTop = '1em';
+                        const caption = document.createElement('caption');
+                        caption.textContent = `${freq} - ${inout}`;
+                        table.appendChild(caption);
+                        const header = document.createElement('tr');
+                        header.innerHTML = '<th>Name</th><th>Date</th><th>Amount</th><th>Delete</th>';
+                        table.appendChild(header);
+                        for (const [name, entry] of Object.entries(entries)) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${entry.name}</td>
+                                <td>${entry.date}</td>
+                                <td>${entry.amount}</td>
+                                <td><button data-freq="${freq}" data-inout="${inout}" data-name="${name}">Delete</button></td>
+                            `;
+                            table.appendChild(row);
+                        }
+                        container.appendChild(table);
+                    }
+                }
+            }
+            // Add event listeners for delete buttons
+            container.querySelectorAll('button[data-freq]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const freq = this.getAttribute('data-freq');
+                    const inout = this.getAttribute('data-inout');
+                    const name = this.getAttribute('data-name');
+                    delete schedule[freq][inout][name];
+                    updateJsonOutput();
+                });
+            });
+        }
+
+        document.getElementById('entryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const freq = document.getElementById('frequency').value;
+            const inout = document.getElementById('inout').value;
+            const name = document.getElementById('name').value.trim();
+            const date = document.getElementById('date').value.trim();
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            if (!name || !date || isNaN(amount)) return;
+
+            schedule[freq][inout][name] = { name, date, amount };
+            updateJsonOutput();
+
+            document.getElementById('name').value = '';
+            document.getElementById('date').value = '';
+            document.getElementById('amount').value = '';
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+            const blob = new Blob([JSON.stringify(schedule, null, 4)], {type: "application/json"});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = document.getElementById('user_file_name').value + ".json";
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+
+        updateJsonOutput();
+    </script>
+</body>
+</html>

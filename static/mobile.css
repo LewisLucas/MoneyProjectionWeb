@@ -1,0 +1,118 @@
+/* Base styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 1em;
+    background: #f9f9f9;
+    color: #222;
+}
+
+a {
+    display: inline-block;
+    margin-bottom: 1em;
+    color: #1976d2;
+    text-decoration: none;
+}
+
+h1, h2 {
+    font-size: 1.5em;
+    margin-top: 1em;
+    margin-bottom: 0.5em;
+}
+
+form, .entry-list {
+    background: #fff;
+    padding: 1em;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    margin-bottom: 1em;
+}
+
+label {
+    display: block;
+    margin-top: 1em;
+    font-size: 1em;
+}
+
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.7em;
+    margin-top: 0.3em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    box-sizing: border-box;
+}
+
+button,
+input[type="submit"] {
+    margin-top: 1em;
+    padding: 0.7em 1.2em;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover,
+input[type="submit"]:hover {
+    background: #125ea2;
+}
+
+.entry-list table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    font-size: 0.95em;
+}
+
+.entry-list th,
+.entry-list td {
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+.entry-list caption {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+    text-align: left;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 1em auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    background: #fff;
+    object-fit: contain;
+}
+
+@media (max-width: 600px) {
+    body {
+        margin: 0.5em;
+    }
+    h1, h2 {
+        font-size: 1.2em;
+    }
+    form, .entry-list {
+        padding: 0.7em;
+    }
+    .entry-list table,
+    .entry-list th,
+    .entry-list td {
+        font-size: 0.9em;
+    }
+    button,
+    input[type="submit"] {
+        font-size: 1em;
+        padding: 0.7em;
+    }
+}
