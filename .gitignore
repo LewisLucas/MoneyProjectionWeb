@@ -2,4 +2,7 @@ images/*
 media/*
 uploads/*
 __pycache__/
-en
+env
+token.txt
+log.txt
+*.json

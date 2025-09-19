@@ -19,21 +19,10 @@ def arguments():
 args = arguments()
 current_money = args.money
 number_of_days = args.days
-curret_date = datetime.date.today()
+curret_date = datetime.date.today() + datetime.timedelta(days=1)
 date_list = [curret_date + datetime.timedelta(days=i) for i in range(number_of_days)]
 with open(args.file, "r") as file:
     schedule = json.load(file)  
-
-class bcolors:
-    """Class for colored output in terminal."""
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
 class Calendar:
     def __str__(self):
@@ -147,13 +136,30 @@ class Calendar:
         # Clear previous transactions file
         if os.path.exists('media/transactions.txt'):
             os.remove('media/transactions.txt')
-        # Write transactions to file
+        # Write transactions to files
+        transactions_json = {"transactions": [
+
+        ]}
         with open('media/transactions.txt', 'w') as f:
             for d in filtered_days:
                 string = str(d)
                 string = string.replace(" -daily overdraft:£1.5,", "")
                 f.write(string + '\n')
-            
+        with open('push_notifier/transactions.json', 'w') as f:
+            for d in filtered_days:
+                for t in d.transactions:
+                    t = t.replace(",", "")
+                    name = t.split(":")[0].replace("+", "").replace("-", "")
+                    amount = float(t.split(":")[1].replace("£", ""))
+                    date = d.date.strftime("%d-%m-%Y")
+                    if name == "daily overdraft":
+                        continue
+                    transactions_json["transactions"].append({
+                        "name": name,
+                        "amount": amount,
+                        "date": date
+                    })
+            json.dump(transactions_json, f, indent=4)
 
 class Day:
     def __str__(self):
@@ -181,10 +187,8 @@ class Day:
 calendar = Calendar()
 calendar.calculate_schedule_transactions()
 calendar.create_transaction_list()
-# calendar.list_days()
 
 # Delete the json file after processing
-import os
 if os.path.exists(args.file):
     os.remove(args.file)
 
