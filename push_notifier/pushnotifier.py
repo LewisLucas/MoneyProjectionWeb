@@ -27,6 +27,7 @@ def push(title, body):
 
 due_today = []
 due_tomorrow = []
+incoming = ["ESA", "PIP", "Walsall Council"]
 today = dt.now()
 tomorrow = today + timedelta(days=1)
 marked_for_removal = []
@@ -38,7 +39,10 @@ for transaction in transactions["transactions"]:
     amount = transaction["amount"]
     date = transaction["date"]
     if dt.strptime(date, "%d-%m-%Y").date() == today.date():
-        due_today.append(f"£{amount} due today for {name}")
+        if name not in incoming:
+            due_today.append(f"£{amount} due today for {name}")
+        else:
+            due_today.append(f"£{amount} incoming today for {name}")
         # Remove the transaction from the list if due today
         marked_for_removal.append(transaction)
       
@@ -47,15 +51,18 @@ for transaction in transactions["transactions"]:
     amount = transaction["amount"]
     date = transaction["date"]
     if dt.strptime(date, "%d-%m-%Y").date() == tomorrow.date():
-        due_tomorrow.append(f"£{amount} due tomorrow for {name}")  
+        if name not in incoming: 
+            due_tomorrow.append(f"£{amount} due tomorrow for {name}")
+        else:
+            due_tomorrow.append(f"£{amount} incoming tomorrow for {name}")
 
 if due_today:
     message = "\n".join(due_today)
-    push(f"{len(due_today)} Payments Due Today", message)
+    push(f"{len(due_today)} Transactions Today", message)
 
 if due_tomorrow:
     message = "\n".join(due_tomorrow)
-    push(f"{len(due_tomorrow)} Payments Due Tomorrow", message)
+    push(f"{len(due_tomorrow)} Transactions Tomorrow", message)
 
 file.close()
 # Remove transactions that were due today
